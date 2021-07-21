@@ -4,6 +4,7 @@ using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using Org.BouncyCastle.Utilities.Encoders;
+using static System.Security.Cryptography.ECCurve;
 
 namespace VerificationTests
 {
@@ -81,6 +82,7 @@ namespace VerificationTests
 
                 var ecdsaKey = ECDsa.Create(new ECParameters
                 {
+                    Curve = NamedCurves.nistP256,
                     Q = new ECPoint
                     {
                         X = x,
