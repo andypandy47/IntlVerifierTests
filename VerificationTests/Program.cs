@@ -18,6 +18,8 @@ namespace VerificationTests
 
         private static EUExampleRepository EUDataRepository = new EUExampleRepository();
 
+        private static BarcodeApiRepository BarcodeApiRepository = new BarcodeApiRepository();
+
         static void Main(string[] args)
         {
             var gbEngExamples = EnglandDataRepository.GetTestExamples().ToList();
@@ -71,33 +73,65 @@ namespace VerificationTests
                 }
             }
 
-            try
+
+            // 2D Barcode API
+            var barcodeApiExamples =  BarcodeApiRepository.GetTestExamples().ToList();
+            for (var i = 0; i < barcodeApiExamples.Count; i++)
             {
-                var ashExample = "HC1:6BFOXNXTSMAHN-HLLQ6E8 KLI HKHRSG24/4X6BMF6.UCOMIN6R*F7IA7T84.E7NOBTG90OARH9P1J4HGZJK4HGX2MGY8Z.C/NLE:FJED.IAHLCV5GVWNZIKXGGOA6FQREC5L64HX6IAS3DS2980IQODPUHLG$GAHLW 70SO:GOLIROGO3T59YLLYP-HQLTQ9R0+L6H6QD/5UNU7C174VS-EJWE0OEY81KFE-H1BT14T9AKPCPP7ZMDX02:C5QD8DJI7JSTNB959/5Y*ODKQR95Y16 96P/5CA7T5MNS5ZWJ6UCYWVDINV7J.$2BSH0CJA+O*CRGJCDAF4J4KWH0/C$WGL$SOP5YS8Q*VMRN %B2PECC46GD*JB$FVRK0DKETF542K1/4GZP+.TI7L8YD9*3JJP/UNL M KR$307E1T2";
-
-                var ashCoseObject = DecodeQR(ashExample);
-
-                var x = Convert.FromBase64String("DK7mHdv6qonWOThi86jJzW1XZef01CjPO1oon6WElkc=");
-                var y = Convert.FromBase64String("Kj9/1P8ovejCRspTN0QBoxoe3tlPkQlKxbXP1lCGlX0=");
-
-                var ecdsaKey = ECDsa.Create(new ECParameters
+                try
                 {
-                    Curve = NamedCurves.nistP256,
-                    Q = new ECPoint
-                    {
-                        X = x,
-                        Y = y
-                    }
-                });
+                    var example = barcodeApiExamples[i];
 
-                ashCoseObject.VerifySignature(ecdsaKey.ExportSubjectPublicKeyInfo());
+                    var coseObject = DecodeQR(example.Data);
 
-                Console.WriteLine("Ash Example: Successfully Verified! \r");
+                    var pk = Convert.FromBase64String(example.Key);
+
+                    coseObject.VerifySignature(pk);
+
+                    //var decoded = coseObject.GetJson();
+
+                    Console.WriteLine($"2D Barcode API Example {i + 1}: Successfully Verified \r");
+                    //Console.Write(decoded);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine($"[ERROR]: GB Example {i + 1}: {e.Message} \r");
+                }
             }
-            catch(Exception e)
-            {
-                Console.WriteLine($"[ERROR]: Ash Example: {e.Message} \r");
-            }
+
+
+            // OLD 2D BARCODE API WAY TO CHECK
+            //try
+            //{
+            //    var ashExample = "HC1:6BFOXNXTSMAHN-HLLQQA8KN4 G2KR4G.4.HL44W/ZAOJA4%TA-APF6R:5SVBHABVCNN95ZTM7W5HHP4F5G+P%YQ+GOUSPA1R$HQUHP.SQIHPAHPGSOH767-RCTQHCRX39JW6UA7:MPJW6UX4U96L*KDYPWGO*88+EQHCRXQ6IWMAK8DK4LC6DQ4$84-/5AJOS:7A7NG16 YK:84J/MKQ5DD7M47:/6N9R%EPXCROGO COPAD7EDA.D90I/EL6KKYHIL4OTJLGY83DE0OA0D9E2LBHHGKLO-K%FGLIA5D8MJKQJK6HMMBIE2K5OI9YI:8D%F1$$9*EREA7IB65C94JB0J9JVL 3F6LFCMH%-BPKD4JB781E34JY3QCE/YU3Y9UM97H98$QP3R8BHGHRHALQ%PUX8XH4YH5$TVNAW65FO.C LT:G7JCQEV3B*CR PSFV96U:+JJUC+5RAWBKJIY$R:ATRMUXZ7LDR7HB6*EK3RQ%7XFWWOPM20/4RB0";
+
+            //    var ashCoseObject = DecodeQR(ashExample);
+
+            //    var x = Convert.FromBase64String("DK7mHdv6qonWOThi86jJzW1XZef01CjPO1oon6WElkc=");
+            //    var y = Convert.FromBase64String("Kj9/1P8ovejCRspTN0QBoxoe3tlPkQlKxbXP1lCGlX0=");
+
+            //    var ecdsaKey = ECDsa.Create(new ECParameters
+            //    {
+            //        Curve = NamedCurves.nistP256,
+            //        Q = new ECPoint
+            //        {
+            //            X = x,
+            //            Y = y
+            //        }
+            //    });
+
+            //    ashCoseObject.VerifySignature(ecdsaKey.ExportSubjectPublicKeyInfo());
+
+
+
+            //    var fish = ashCoseObject.GetJson();
+
+            //    Console.WriteLine("Ash Example: Successfully Verified! \r");
+            //}
+            //catch(Exception e)
+            //{
+            //    Console.WriteLine($"[ERROR]: Ash Example: {e.Message} \r");
+            //}
         }
 
         static CoseSign1Object DecodeQR(string data)

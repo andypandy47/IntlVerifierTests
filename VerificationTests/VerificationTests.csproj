@@ -6,11 +6,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Examples\BarcodeApi.json" />
     <None Remove="Examples\England.json" />
     <None Remove="Examples\EU.json" />
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Examples\BarcodeApi.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
     <EmbeddedResource Include="Examples\England.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
